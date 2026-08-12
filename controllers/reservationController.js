@@ -2,6 +2,43 @@ const { sequelize, Drop, Reservation, User } = require('../models');
 const { Op } = require('sequelize');
 const { sendResponse, sendError } = require('../utils/response');
 
+const getActiveReservations = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const now = new Date();
+
+    const reservations = await Reservation.findAll({
+      where: {
+        user_id: userId,
+        status: 'active',
+        expires_at: { [Op.gt]: now },
+      },
+      include: [
+        {
+          model: Drop,
+          as: 'drop',
+          attributes: ['id', 'name', 'price'],
+        },
+      ],
+      order: [['created_at', 'DESC']],
+    });
+
+    const formatted = reservations.map((r) => ({
+      id: r.id,
+      dropId: r.drop_id,
+      dropName: r.drop?.name || 'Sneaker Drop',
+      dropPrice: r.drop?.price || 0,
+      expires_at: r.expires_at,
+      created_at: r.created_at,
+    }));
+
+    sendResponse(res, { data: formatted });
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    sendError(res, { message: 'Failed to fetch reservations', code: 500 });
+  }
+};
+
 const reserve = async (req, res) => {
   const transaction = await sequelize.transaction();
   
@@ -159,4 +196,4 @@ const cancelReservation = async (req, res) => {
   }
 };
 
-module.exports = { reserve, cancelReservation };
+module.exports = { getActiveReservations, reserve, cancelReservation };

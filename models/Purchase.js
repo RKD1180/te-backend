@@ -26,7 +26,7 @@ const Purchase = sequelize.define('Purchase', {
   },
   reservation_id: {
     type: DataTypes.UUID,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'reservations',
       key: 'id',

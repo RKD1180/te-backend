@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { reserve, cancelReservation } = require('../controllers/reservationController');
+const { getActiveReservations, reserve, cancelReservation } = require('../controllers/reservationController');
 
+router.get('/', getActiveReservations);
 router.post('/', reserve);
 router.delete('/:id', cancelReservation);
 

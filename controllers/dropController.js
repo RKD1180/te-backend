@@ -4,7 +4,7 @@ const { sendResponse, sendError } = require('../utils/response');
 const getDrops = async (req, res) => {
   try {
     const drops = await Drop.findAll({
-      order: [['created_at', 'DESC']],
+      order: [['created_at', 'DESC'], ['id', 'ASC']],
     });
 
     const dropsWithPurchases = await Promise.all(
