@@ -14,9 +14,21 @@ const { sendResponse } = require('./utils/response');
 
 const app = express();
 
-// Middleware
+// CORS: allow multiple origins via comma-separated CORS_ORIGIN env var.
+// With credentials enabled, the matching origin must be echoed back exactly
+// (a wildcard '*' is not allowed), so we use the origin callback form.
+const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin(origin, callback) {
+    if (!origin || corsOrigins.includes(origin)) {
+      return callback(null, origin || false);
+    }
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
   credentials: true,
 }));
 app.use(express.json());
