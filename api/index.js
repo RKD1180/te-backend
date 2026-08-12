@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const pg = require('pg');
 
-console.log('[cold-start] api/index.js v4 loading (pg explicitly required)');
+console.log('[cold-start] api/index.js v5 loading (uuid ESM fix)');
 
 const app = require('../app');
 
