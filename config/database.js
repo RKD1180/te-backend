@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const pg = require('pg');
 require('dotenv').config();
 
 if (!process.env.DATABASE_URL) {
@@ -7,6 +8,7 @@ if (!process.env.DATABASE_URL) {
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
+  dialectModule: pg,
   protocol: 'postgres',
   logging: false,
   dialectOptions: {
