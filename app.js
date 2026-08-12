@@ -31,6 +31,14 @@ app.use('/api/drops', authenticate, dropRoutes);
 app.use('/api/reserve', authenticate, reservationRoutes);
 app.use('/api/purchase', authenticate, purchaseRoutes);
 
+// Root
+app.get('/', (req, res) => {
+  sendResponse(res, {
+    message: 'Sneaker Drop API is running',
+    data: { health: '/api/health', docs: '/README' },
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   sendResponse(res, { data: { timestamp: new Date().toISOString() }, message: 'Server is running' });
