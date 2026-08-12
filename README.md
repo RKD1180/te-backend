@@ -317,6 +317,40 @@ Error example:
 | `reservation-expired` | Server → Client | Notifies expired reservation |
 | `purchase-completed` | Server → Client | Notifies completed purchase |
 
+## Deploying to Vercel
+
+The project includes Vercel deployment files (`vercel.json`, `api/index.js`,
+`.vercelignore`). The REST API is fully Vercel-compatible — the Express app is
+exported from `api/index.js` and pending migrations run automatically on cold
+start.
+
+Steps:
+
+1. Push the `backend/` folder to a GitHub repo (or import it directly).
+2. In Vercel, create a new project and point it at the backend directory.
+3. Add the same environment variables from `.env` to the Vercel project
+   settings (Framework Preset: **Other**; Build Command: none; Output
+   Directory: none).
+4. Deploy.
+
+**Two things to know before you rely on this:**
+
+- **WebSockets won't work serverless.** Socket.io needs a persistent TCP
+  connection; Vercel serverless functions can't hold one. The real-time
+  events (`stock-updated`, etc.) are a local-development nicety. In
+  production, the frontend should poll (or use server-sent events from a
+  dedicated server) for stock changes.
+- **The stock-recovery sweeper won't run.** `setInterval` dies with the
+  function invocation on Vercel, so expired reservations won't auto-restore
+  stock. If you deploy this way, restore stock lazily at read time (treat any
+  `expires_at < now` reservation as expired in the `GET /api/drops` stock
+  count) or run the recovery service on a small always-on host (e.g. Render,
+  Railway, or a VPS).
+
+The atomic `SELECT ... FOR UPDATE` reservation and purchase logic work
+identically on Vercel — only the real-time and background bits need a
+different home.
+
 ## Drop Activity Feed
 
 `GET /api/drops` returns each drop with its **3 most recent successful

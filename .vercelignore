@@ -1,0 +1,7 @@
+# Local dev files that must not be deployed
+.env
+node_modules/
+*.log
+seed.js
+migrate.js
+nodemon.json
