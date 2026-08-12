@@ -1,6 +1,8 @@
 require('dotenv').config();
 
-console.log('[cold-start] api/index.js v3 loading (dialectModule fix)');
+const pg = require('pg');
+
+console.log('[cold-start] api/index.js v4 loading (pg explicitly required)');
 
 const app = require('../app');
 
