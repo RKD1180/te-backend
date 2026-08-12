@@ -321,17 +321,20 @@ Error example:
 
 The project includes Vercel deployment files (`vercel.json`, `api/index.js`,
 `.vercelignore`). The REST API is fully Vercel-compatible — the Express app is
-exported from `api/index.js` and pending migrations run automatically on cold
-start.
+exported from `api/index.js`. Migrations are **not** run on Vercel; apply the
+schema to your database once before deploying.
 
 Steps:
 
 1. Push the `backend/` folder to a GitHub repo (or import it directly).
-2. In Vercel, create a new project and point it at the backend directory.
-3. Add the same environment variables from `.env` to the Vercel project
+2. Create your database and run the migrations once:
+   `npm run migrate` (locally, against the `DATABASE_URL` you'll also set in
+   Vercel) — or apply `backend/migrations/001_create_tables.sql` directly.
+3. In Vercel, create a new project and point it at the backend directory.
+4. Add the same environment variables from `.env` to the Vercel project
    settings (Framework Preset: **Other**; Build Command: none; Output
    Directory: none).
-4. Deploy.
+5. Deploy.
 
 **Two things to know before you rely on this:**
 
